@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+
+body {
+    font-family: 'Tajawal', sans-serif;
+    text-align: center;
+    margin: 50px;
+    background-color: #f4f4f4;
+    direction: rtl;
+    /* تعيين الخلفية العامة للموقع */
+
+    background-image: url('https://theabbie.github.io/blog/assets/official-whatsapp-background-image.jpg');
+    background-size: cover; /* لضمان أن تغطي الخلفية الشاشة بالكامل */
+    background-position: center; /* لتوسيط الخلفية بشكل مثالي */
+    background-repeat: no-repeat; /* لمنع تكرار الخلفية */
+    background-attachment: fixed; /* لجعل الخلفية ثابتة عند التمرير */
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+
+
+.container {
+    background: white;
+    padding: 30px;
+    max-width: 400px;
+    margin: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+h1 {
+    color: #333;
+}
+
+p {
+    color: #666;
+}
+
+.btn {
+    background-color: #25D366;
+    color: white;
+    padding: 15px 25px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.btn:hover {
+    background-color: #1da851;
+}
+
+input {
+    padding: 10px;
+    font-size: 18px;
+    width: 100%;
+    margin-top: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: right;
+}
+
+small {
+    display: block;
+    margin-top: 5px;
+    color: gray;
+}
+
+
+
+
+/* الفوتر */
+.footer {
+    background-color: #25d366; /* الأخضر الخاص بواتساب */
+    color: white;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.footer-container {
+    max-width: 1200px;
+    width: 100%;
+    padding: 20px;
+}
+
+.footer-logo img {
+    width: 200px;
+    height: auto;
+}
+
+.footer-text p {
+    font-size: 14px;
+    opacity: 0.8;
+    margin: 5px 0;
+}
+
+.footer-links {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.footer-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.footer-social {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.social-icon {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.social-icon:hover {
+    text-decoration: underline;
+}
+
+/* تحسين العرض على الشاشات الصغيرة */
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .footer-social {
+        flex-direction: column;
+        align-items: center;
+    }
+}
